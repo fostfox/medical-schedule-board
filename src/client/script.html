@@ -1,359 +1,304 @@
 <script>
-
-/* script.js */
-
-var data; // Global data
-    var currentAppointmentRecordId = null;
-    var currentAppointment = null; // For editing
-
-    // Russian days array.
-    var days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
-
-    // Show/hide loading overlay.
-    function showLoading() {
-      document.getElementById("loadingOverlay").style.display = "block";
+  /* script.js - Updated Version */
+  var data; // Global data
+  var currentAppointmentRecordId = null;
+  var currentAppointment = null;
+  
+  // Russian days array.
+  var days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
+  
+  // Show/hide loading overlay.
+  function showLoading() {
+    document.getElementById("loadingOverlay").style.display = "block";
+  }
+  function hideLoading() {
+    document.getElementById("loadingOverlay").style.display = "none";
+  }
+  
+  // Show a message in the message modal.
+  function showMessage(msg) {
+    document.getElementById("messageModalBody").innerText = msg;
+    $('#messageModal').modal('show');
+  }
+  
+  // Initialize day selector.
+  function initializeDaySelect() {
+    var today = new Date().getDay();
+    var select = document.getElementById("daySelect");
+    select.innerHTML = "";
+    days.forEach(function(day, index) {
+      var option = document.createElement("option");
+      option.value = day;
+      option.text = day;
+      if (index === today) option.selected = true;
+      select.appendChild(option);
+    });
+    select.addEventListener("change", function() {
+      renderSchedule(select.value);
+    });
+  }
+  
+  // Initialize Specialist filter.
+  function initializeSpecialistFilter() {
+    var select = document.getElementById("specialistFilter");
+    select.innerHTML = '<option value="">Все специалисты</option>';
+    data.specialists.forEach(function(spec) {
+      var option = document.createElement("option");
+      option.value = spec.name;
+      option.text = spec.name;
+      select.appendChild(option);
+    });
+    select.addEventListener("change", function() {
+      renderSchedule(document.getElementById("daySelect").value);
+    });
+  }
+  
+  // Initialize Doctor filter.
+  function initializeDoctorFilter() {
+    var select = document.getElementById("doctorFilter");
+    select.innerHTML = '<option value="">Все врачи</option>';
+    var doctors = {};
+    data.patients.forEach(function(p) {
+      doctors[p.doctor] = true;
+    });
+    Object.keys(doctors).forEach(function(doc) {
+      var option = document.createElement("option");
+      option.value = doc;
+      option.text = doc;
+      select.appendChild(option);
+    });
+    select.addEventListener("change", function() {
+      renderSchedule(document.getElementById("daySelect").value);
+    });
+  }
+  
+  // Populate checkboxes for days in add appointment modal.
+  function populateAddDaysCheckboxes() {
+    var container = document.getElementById("addDaysContainer");
+    container.innerHTML = "";
+    days.forEach(function(day) {
+      var div = document.createElement("div");
+      div.className = "form-check form-check-inline";
+      var input = document.createElement("input");
+      input.type = "checkbox";
+      input.className = "form-check-input";
+      input.value = day;
+      input.id = "addDay_" + day;
+      var label = document.createElement("label");
+      label.className = "form-check-label";
+      label.htmlFor = "addDay_" + day;
+      label.textContent = day;
+      div.appendChild(input);
+      div.appendChild(label);
+      container.appendChild(div);
+    });
+  }
+  
+  // Render schedule table.
+  function renderSchedule(selectedDay) {
+    if (!data) return;
+    var filteredAppointments = data.appointments.filter(function(app) {
+      return app.day === selectedDay;
+    });
+    var selectedSpec = document.getElementById("specialistFilter").value;
+    if (selectedSpec !== "") {
+      filteredAppointments = filteredAppointments.filter(function(app) {
+        return app.specialist === selectedSpec;
+      });
     }
-    function hideLoading() {
-      document.getElementById("loadingOverlay").style.display = "none";
-    }
-    
-    // Show a message in the message modal.
-    function showMessage(msg) {
-      document.getElementById("messageModalBody").innerText = msg;
-      $('#messageModal').modal('show');
-    }
-    
-    // Initialize day selector for schedule view.
-    function initializeDaySelect() {
-      var today = new Date().getDay();
-      var select = document.getElementById("daySelect");
-      select.innerHTML = "";
-      days.forEach(function(day, index) {
-        var option = document.createElement("option");
-        option.value = day;
-        option.text = day;
-        if (index === today) {
-          option.selected = true;
-        }
-        select.appendChild(option);
-      });
-      select.addEventListener("change", function() {
-        renderSchedule(select.value);
-      });
-    }
-    
-    // Initialize Specialist filter.
-    function initializeSpecialistFilter() {
-      var select = document.getElementById("specialistFilter");
-      select.innerHTML = '<option value="">Все специалисты</option>';
-      data.specialists.forEach(function(spec) {
-        var option = document.createElement("option");
-        option.value = spec.name;
-        option.text = spec.name;
-        select.appendChild(option);
-      });
-      select.addEventListener("change", function() {
-        renderSchedule(document.getElementById("daySelect").value);
-      });
-    }
-    
-    // Initialize Attached Doctor filter.
-    function initializeDoctorFilter() {
-      var select = document.getElementById("doctorFilter");
-      select.innerHTML = '<option value="">Все врачи</option>';
-      var doctors = {};
-      data.patients.forEach(function(p) {
-        doctors[p.doctor] = true;
-      });
-      Object.keys(doctors).forEach(function(doc) {
-        var option = document.createElement("option");
-        option.value = doc;
-        option.text = doc;
-        select.appendChild(option);
-      });
-      select.addEventListener("change", function() {
-        renderSchedule(document.getElementById("daySelect").value);
-      });
-    }
-    
-    // Populate checkboxes for days in add appointment modal.
-    function populateAddDaysCheckboxes() {
-      var container = document.getElementById("addDaysContainer");
-      container.innerHTML = "";
-      days.forEach(function(day) {
-        var div = document.createElement("div");
-        div.className = "form-check form-check-inline";
-        var input = document.createElement("input");
-        input.type = "checkbox";
-        input.className = "form-check-input";
-        input.value = day;
-        input.id = "addDay_" + day;
-        var label = document.createElement("label");
-        label.className = "form-check-label";
-        label.htmlFor = "addDay_" + day;
-        label.textContent = day;
-        div.appendChild(input);
-        div.appendChild(label);
-        container.appendChild(div);
-      });
-    }
-    
-    // Render schedule table.
-    function renderSchedule(selectedDay) {
-      if (!data) return;
-      var filteredAppointments = data.appointments.filter(function(app) {
-        return app.day === selectedDay;
-      });
-      // Apply Specialist filter.
-      var selectedSpec = document.getElementById("specialistFilter").value;
-      if (selectedSpec !== "") {
-        filteredAppointments = filteredAppointments.filter(function(app) {
-          return app.specialist === selectedSpec;
-        });
-      }
-      // Apply Attached Doctor filter.
-      var selectedDoctor = document.getElementById("doctorFilter").value;
-      if (selectedDoctor !== "") {
-        filteredAppointments = filteredAppointments.filter(function(app) {
-          var patient = data.patients.find(function(p) { return p.id === app.patientId; });
-          return patient && patient.doctor === selectedDoctor;
-        });
-      }
-      
-      // Build header: "Пациент", "Отделение", then timeslot columns.
-      var table = document.createElement("table");
-      table.className = "schedule-table table table-bordered";
-      var thead = document.createElement("thead");
-      var headerRow = document.createElement("tr");
-      var thPatient = document.createElement("th");
-      thPatient.textContent = "Пациент";
-      headerRow.appendChild(thPatient);
-      var thWard = document.createElement("th");
-      thWard.textContent = "Отделение";
-      headerRow.appendChild(thWard);
-      data.timeslots.forEach(function(slot) {
-        var th = document.createElement("th");
-        th.textContent = slot.slot;
-        headerRow.appendChild(th);
-      });
-      thead.appendChild(headerRow);
-      table.appendChild(thead);
-      
-      var patientsWithAppointment = [];
-      filteredAppointments.forEach(function(app) {
+    var selectedDoctor = document.getElementById("doctorFilter").value;
+    if (selectedDoctor !== "") {
+      filteredAppointments = filteredAppointments.filter(function(app) {
         var patient = data.patients.find(function(p) { return p.id === app.patientId; });
-        if (patient && !patientsWithAppointment.some(function(p) { return p.id === patient.id; })) {
-          patientsWithAppointment.push(patient);
-        }
+        return patient && patient.doctor === selectedDoctor;
       });
-      
-      var tbody = document.createElement("tbody");
-      patientsWithAppointment.forEach(function(patient) {
-        var row = document.createElement("tr");
-        var tdName = document.createElement("td");
-        tdName.textContent = patient.name;
-        row.appendChild(tdName);
-        var tdWard = document.createElement("td");
-        tdWard.textContent = patient.ward || "";
-        row.appendChild(tdWard);
-        data.timeslots.forEach(function(slot) {
-          var td = document.createElement("td");
-          var appointmentEntry = filteredAppointments.find(function(app) {
-            return app.patientId === patient.id && app.timeslotId === slot.id;
-          });
-          if (appointmentEntry) {
-            var cellContent = "<strong>" + appointmentEntry.place + "</strong><br/>" + appointmentEntry.specialist;
-            if (appointmentEntry.notes && appointmentEntry.notes.toString().trim() !== "") {
-              cellContent += " <sup>*</sup>";
-            }
-            td.innerHTML = cellContent;
-            td.style.cursor = "pointer";
-            td.addEventListener("click", function() {
-              showAppointmentModal(patient, appointmentEntry);
-            });
-          }
-          row.appendChild(td);
+    }
+    
+    // Build table.
+    var table = document.createElement("table");
+    table.className = "schedule-table table table-bordered";
+    var thead = document.createElement("thead");
+    var headerRow = document.createElement("tr");
+    var thPatient = document.createElement("th");
+    thPatient.textContent = "Пациент";
+    headerRow.appendChild(thPatient);
+    var thWard = document.createElement("th");
+    thWard.textContent = "Отделение";
+    headerRow.appendChild(thWard);
+    data.timeslots.forEach(function(slot) {
+      var th = document.createElement("th");
+      th.textContent = slot.slot;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+    
+    var patientsWithAppointment = [];
+    filteredAppointments.forEach(function(app) {
+      var patient = data.patients.find(function(p) { return p.id === app.patientId; });
+      if (patient && !patientsWithAppointment.some(function(p) { return p.id === patient.id; })) {
+        patientsWithAppointment.push(patient);
+      }
+    });
+    
+    var tbody = document.createElement("tbody");
+    patientsWithAppointment.forEach(function(patient) {
+      var row = document.createElement("tr");
+      var tdName = document.createElement("td");
+      tdName.textContent = patient.name;
+      row.appendChild(tdName);
+      var tdWard = document.createElement("td");
+      tdWard.textContent = patient.ward || "";
+      row.appendChild(tdWard);
+      data.timeslots.forEach(function(slot) {
+        var td = document.createElement("td");
+        var appointmentEntry = filteredAppointments.find(function(app) {
+          return app.patientId === patient.id && app.timeslotId === slot.id;
         });
-        tbody.appendChild(row);
-      });
-      table.appendChild(tbody);
-      
-      document.getElementById("scheduleContainer").innerHTML = "";
-      document.getElementById("scheduleContainer").appendChild(table);
-    }
-    
-    // Show details modal.
-    function showAppointmentModal(patient, appointment) {
-      currentAppointmentRecordId = appointment.record;
-      currentAppointment = appointment;
-      document.getElementById("modalPatientName").innerHTML = "<strong>Пациент:</strong> " + patient.name;
-      document.getElementById("modalAdmissionDate").innerHTML = "<strong>Дата поступления:</strong> " + patient.admission;
-      document.getElementById("modalDischargeDate").innerHTML = "<strong>Дата выписки:</strong> " + patient.discharge;
-      document.getElementById("modalDoctor").innerHTML = "<strong>Врач ФРМ:</strong> " + patient.doctor;
-      document.getElementById("modalNotes").innerHTML = "<strong>Примечания:</strong> " + appointment.notes;
-      // Ensure details view is visible and edit view hidden.
-      document.getElementById("appointmentDetailsContainer").style.display = "block";
-      document.getElementById("appointmentEditContainer").style.display = "none";
-      document.getElementById("appointmentModalFooter").style.display = "block";
-      document.getElementById("editFooter").style.display = "none";
-      $('#appointmentModal').modal('show');
-    }
-    
-    // Switch to edit mode.
-    document.getElementById("editAppointmentBtn").addEventListener("click", function() {
-      if (!currentAppointment) return;
-      var editTimeslot = document.getElementById("editTimeslot");
-      editTimeslot.innerHTML = "";
-      data.timeslots.forEach(function(slot) {
-        var option = document.createElement("option");
-        option.value = slot.id;
-        option.text = slot.slot;
-        if (slot.id == currentAppointment.timeslotId) {
-          option.selected = true;
+        if (appointmentEntry) {
+          var cellContent = "<strong>" + appointmentEntry.place + "</strong><br/>" + appointmentEntry.specialist;
+          if (appointmentEntry.notes && appointmentEntry.notes.toString().trim() !== "") {
+            cellContent += " <sup>*</sup>";
+          }
+          td.innerHTML = cellContent;
+          td.style.cursor = "pointer";
+          td.addEventListener("click", function() {
+            showAppointmentModal(patient, appointmentEntry);
+          });
         }
-        editTimeslot.appendChild(option);
+        row.appendChild(td);
       });
-      var editSpecialist = document.getElementById("editSpecialist");
-      editSpecialist.innerHTML = "";
-      data.specialists.forEach(function(spec) {
-        var option = document.createElement("option");
-        option.value = spec.id;
-        option.text = spec.name;
-        if (spec.id == currentAppointment.specialistId) {
-          option.selected = true;
-        }
-        editSpecialist.appendChild(option);
-      });
-      document.getElementById("editNotes").value = currentAppointment.notes;
-      document.getElementById("appointmentDetailsContainer").style.display = "none";
-      document.getElementById("appointmentEditContainer").style.display = "block";
-      document.getElementById("appointmentModalFooter").style.display = "none";
-      document.getElementById("editFooter").style.display = "block";
+      tbody.appendChild(row);
     });
+    table.appendChild(tbody);
     
-    // Cancel edit mode.
-    document.getElementById("cancelEditBtn").addEventListener("click", function() {
-      document.getElementById("appointmentDetailsContainer").style.display = "block";
-      document.getElementById("appointmentEditContainer").style.display = "none";
-      document.getElementById("appointmentModalFooter").style.display = "block";
-      document.getElementById("editFooter").style.display = "none";
+    document.getElementById("scheduleContainer").innerHTML = "";
+    document.getElementById("scheduleContainer").appendChild(table);
+  }
+  
+  // Show appointment modal.
+  function showAppointmentModal(patient, appointment) {
+    currentAppointmentRecordId = appointment.record;
+    currentAppointment = appointment;
+    document.getElementById("modalPatientName").innerHTML = "<strong>Пациент:</strong> " + patient.name;
+    document.getElementById("modalAdmissionDate").innerHTML = "<strong>Дата поступления:</strong> " + patient.admission;
+    document.getElementById("modalDischargeDate").innerHTML = "<strong>Дата выписки:</strong> " + patient.discharge;
+    document.getElementById("modalDoctor").innerHTML = "<strong>Врач ФРМ:</strong> " + patient.doctor;
+    document.getElementById("modalNotes").innerHTML = "<strong>Примечания:</strong> " + appointment.notes;
+    document.getElementById("appointmentDetailsContainer").style.display = "block";
+    document.getElementById("appointmentEditContainer").style.display = "none";
+    document.getElementById("appointmentModalFooter").style.display = "block";
+    document.getElementById("editFooter").style.display = "none";
+    $('#appointmentModal').modal('show');
+  }
+  
+  // Event listeners for editing and saving appointments.
+  document.getElementById("editAppointmentBtn").addEventListener("click", function() {
+    if (!currentAppointment) return;
+    var editTimeslot = document.getElementById("editTimeslot");
+    editTimeslot.innerHTML = "";
+    data.timeslots.forEach(function(slot) {
+      var option = document.createElement("option");
+      option.value = slot.id;
+      option.text = slot.slot;
+      if (slot.id == currentAppointment.timeslotId) option.selected = true;
+      editTimeslot.appendChild(option);
     });
-    
-    // Save edited appointment.
-    document.getElementById("saveEditBtn").addEventListener("click", function() {
-      var formData = {
-        record: currentAppointmentRecordId,
-        timeslotId: document.getElementById("editTimeslot").value,
-        specialist: document.getElementById("editSpecialist").value,
-        notes: document.getElementById("editNotes").value
-      };
+    var editSpecialist = document.getElementById("editSpecialist");
+    editSpecialist.innerHTML = "";
+    data.specialists.forEach(function(spec) {
+      var option = document.createElement("option");
+      option.value = spec.id;
+      option.text = spec.name;
+      if (spec.id == currentAppointment.specialistId) option.selected = true;
+      editSpecialist.appendChild(option);
+    });
+    document.getElementById("editNotes").value = currentAppointment.notes;
+    document.getElementById("appointmentDetailsContainer").style.display = "none";
+    document.getElementById("appointmentEditContainer").style.display = "block";
+    document.getElementById("appointmentModalFooter").style.display = "none";
+    document.getElementById("editFooter").style.display = "block";
+  });
+  
+  document.getElementById("cancelEditBtn").addEventListener("click", function() {
+    document.getElementById("appointmentDetailsContainer").style.display = "block";
+    document.getElementById("appointmentEditContainer").style.display = "none";
+    document.getElementById("appointmentModalFooter").style.display = "block";
+    document.getElementById("editFooter").style.display = "none";
+  });
+  
+  document.getElementById("saveEditBtn").addEventListener("click", function() {
+    var formData = {
+      record: currentAppointmentRecordId,
+      timeslotId: document.getElementById("editTimeslot").value,
+      specialist: document.getElementById("editSpecialist").value,
+      notes: document.getElementById("editNotes").value
+    };
+    showLoading();
+    google.script.run.withSuccessHandler(function(response) {
+      hideLoading();
+      if(response.indexOf("Ошибка:") === 0) {
+        showMessage(response);
+      } else {
+        showMessage(response);
+        google.script.run.withSuccessHandler(function(returnedData) {
+          data = returnedData;
+          renderSchedule(document.getElementById("daySelect").value);
+          var patient = data.patients.find(function(p) { return p.id === currentAppointment.patientId; });
+          currentAppointment = data.appointments.find(function(a) { return a.record === currentAppointmentRecordId; });
+          showAppointmentModal(patient, currentAppointment);
+        }).getData();
+      }
+    }).updateAppointment(formData);
+  });
+  
+  document.getElementById("deleteAppointmentBtn").addEventListener("click", function() {
+    if (!currentAppointmentRecordId) return;
+    if (confirm("Вы уверены, что хотите удалить этот прием?")) {
       showLoading();
       google.script.run.withSuccessHandler(function(response) {
         hideLoading();
-        if(response.indexOf("Ошибка:") === 0) {
-          showMessage(response);
-        } else {
-          showMessage(response);
-          google.script.run.withSuccessHandler(function(returnedData) {
-            data = returnedData;
-            renderSchedule(document.getElementById("daySelect").value);
-            var patient = data.patients.find(function(p) { return p.id === currentAppointment.patientId; });
-            currentAppointment = data.appointments.find(function(a) { return a.record === currentAppointmentRecordId; });
-            showAppointmentModal(patient, currentAppointment);
-          }).getData();
-        }
-      }).updateAppointment(formData);
-    });
-    
-    // Delete appointment.
-    document.getElementById("deleteAppointmentBtn").addEventListener("click", function() {
-      if (!currentAppointmentRecordId) return;
-      if (confirm("Вы уверены, что хотите удалить этот прием?")) {
-        showLoading();
-        google.script.run.withSuccessHandler(function(response) {
-          hideLoading();
-          showMessage(response);
-          google.script.run.withSuccessHandler(function(returnedData) {
-            data = returnedData;
-            renderSchedule(document.getElementById("daySelect").value);
-          }).getData();
-          $('#appointmentModal').modal('hide');
-        }).deleteAppointment(currentAppointmentRecordId);
-      }
-    });
-    
-    // Populate add appointment form selects.
-    function populateAddAppointmentForm() {
-      var patientSelect = document.getElementById("addPatient");
-      patientSelect.innerHTML = "";
-      data.patients.forEach(function(patient) {
-        var option = document.createElement("option");
-        option.value = patient.id;
-        option.text = patient.name;
-        patientSelect.appendChild(option);
-      });
-      var timeslotSelect = document.getElementById("addTimeslot");
-      timeslotSelect.innerHTML = "";
-      data.timeslots.forEach(function(slot) {
-        var option = document.createElement("option");
-        option.value = slot.id;
-        option.text = slot.slot;
-        timeslotSelect.appendChild(option);
-      });
-      var specialistSelect = document.getElementById("addSpecialist");
-      specialistSelect.innerHTML = "";
-      data.specialists.forEach(function(spec) {
-        var option = document.createElement("option");
-        option.value = spec.id;
-        option.text = spec.name;
-        specialistSelect.appendChild(option);
-      });
-      populateAddDaysCheckboxes();
+        showMessage(response);
+        google.script.run.withSuccessHandler(function(returnedData) {
+          data = returnedData;
+          renderSchedule(document.getElementById("daySelect").value);
+        }).getData();
+        $('#appointmentModal').modal('hide');
+      }).deleteAppointment(currentAppointmentRecordId);
     }
-    
-    // Handle add appointment form submission.
-    document.getElementById("addAppointmentForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      var checkboxes = document.querySelectorAll("#addDaysContainer input[type=checkbox]");
-      var selectedDays = [];
-      checkboxes.forEach(function(cb) {
-        if (cb.checked) { selectedDays.push(cb.value); }
-      });
-      if (selectedDays.length === 0) {
-        showMessage("Пожалуйста, выберите хотя бы один день недели.");
-        return;
-      }
-      var formData = {
-        patientId: document.getElementById("addPatient").value,
-        days: selectedDays,
-        timeslotId: document.getElementById("addTimeslot").value,
-        specialist: document.getElementById("addSpecialist").value,
-        place: document.getElementById("addPlace").value,
-        notes: document.getElementById("addNotes").value
-      };
-      showLoading();
-      google.script.run.withSuccessHandler(function(response) {
-        hideLoading();
-        if(response.indexOf("Ошибка:") === 0) {
-          showMessage(response);
-        } else {
-          showMessage(response);
-          google.script.run.withSuccessHandler(function(returnedData) {
-            data = returnedData;
-            renderSchedule(document.getElementById("daySelect").value);
-            populateAddAppointmentForm();
-            document.getElementById("addPlace").value = "";
-            document.getElementById("addNotes").value = "";
-            var cbs = document.querySelectorAll("#addDaysContainer input[type=checkbox]");
-            cbs.forEach(function(cb) { cb.checked = false; });
-            $('#addAppointmentModal').modal('hide');
-          }).getData();
-        }
-      }).addAppointment(formData);
+  });
+  
+  // Populate add appointment form.
+  function populateAddAppointmentForm() {
+    var patientSelect = document.getElementById("addPatient");
+    patientSelect.innerHTML = "";
+    data.patients.forEach(function(patient) {
+      var option = document.createElement("option");
+      option.value = patient.id;
+      option.text = patient.name;
+      patientSelect.appendChild(option);
     });
-
-
-// ----- Page Switching -----
+    var timeslotSelect = document.getElementById("addTimeslot");
+    timeslotSelect.innerHTML = "";
+    data.timeslots.forEach(function(slot) {
+      var option = document.createElement("option");
+      option.value = slot.id;
+      option.text = slot.slot;
+      timeslotSelect.appendChild(option);
+    });
+    var specialistSelect = document.getElementById("addSpecialist");
+    specialistSelect.innerHTML = "";
+    data.specialists.forEach(function(spec) {
+      var option = document.createElement("option");
+      option.value = spec.id;
+      option.text = spec.name;
+      specialistSelect.appendChild(option);
+    });
+    populateAddDaysCheckboxes();
+  }
+  
+  // Patients management functions.
+ 
 function showSchedulePage() {
   document.getElementById("schedulePage").style.display = "block";
   document.getElementById("patientsPage").style.display = "none";
@@ -361,160 +306,144 @@ function showSchedulePage() {
 function showPatientsPage() {
   document.getElementById("schedulePage").style.display = "none";
   document.getElementById("patientsPage").style.display = "block";
-  renderPatientsList();
 }
-document.getElementById("navSchedule").addEventListener("click", showSchedulePage);
-document.getElementById("navPatients").addEventListener("click", showPatientsPage);
-document.getElementById("backToScheduleBtn").addEventListener("click", showSchedulePage);
-
-// ----- Patients Management Functions -----
-
-// When "Добавить пациента" button is clicked, clear the form fields.
-document.getElementById("addPatientBtn").addEventListener("click", function(){
-  document.getElementById("patientId").value = "";
-  document.getElementById("patientName").value = "";
-  document.getElementById("patientDoctor").value = "";
-  document.getElementById("patientAdmission").value = "";
-  document.getElementById("patientDischarge").value = "";
-  document.getElementById("patientWard").value = "";
-  $('#addPatientModal').modal('show');
-});
-
-// Open modal to edit an existing patient.
-function openEditPatientModal(patientId) {
-  var patient = data.patients.find(function(p){ return p.id == patientId; });
-  if (!patient) return;
-  document.getElementById("patientId").value = patient.id;
-  document.getElementById("patientName").value = patient.name;
-  document.getElementById("patientDoctor").value = patient.doctor;
-  document.getElementById("patientAdmission").value = patient.admission;
-  document.getElementById("patientDischarge").value = patient.discharge;
-  document.getElementById("patientWard").value = patient.ward || "";
-  $('#addPatientModal').modal('show'); // reuse the same modal for add/edit
-}
-
-// Render the left-side patients list.
-function renderPatientsList() {
-  var listContainer = document.getElementById("patientsList");
-  listContainer.innerHTML = "";
-  var searchValue = document.getElementById("patientSearch").value.toLowerCase();
-  var sortOption = document.getElementById("patientSort").value;
-  
-  var filteredPatients = data.patients.filter(function(p) {
-    return p.name.toLowerCase().indexOf(searchValue) !== -1;
+  document.getElementById("addPatientBtn").addEventListener("click", function(){
+    document.getElementById("patientId").value = "";
+    document.getElementById("patientName").value = "";
+    document.getElementById("patientDoctor").value = "";
+    document.getElementById("patientAdmission").value = "";
+    document.getElementById("patientDischarge").value = "";
+    document.getElementById("patientWard").value = "";
+    $('#addPatientModal').modal('show');
   });
   
-  if(sortOption === "name"){
-    filteredPatients.sort(function(a,b){ return a.name.localeCompare(b.name); });
-  } else if(sortOption === "discharge"){
-    filteredPatients.sort(function(a,b){
-      var da = new Date(a.discharge), db = new Date(b.discharge);
-      return da - db;
+  function openEditPatientModal(patientId) {
+    var patient = data.patients.find(function(p){ return p.id == patientId; });
+    if (!patient) return;
+    document.getElementById("patientId").value = patient.id;
+    document.getElementById("patientName").value = patient.name;
+    document.getElementById("patientDoctor").value = patient.doctor;
+    document.getElementById("patientAdmission").value = patient.admission;
+    document.getElementById("patientDischarge").value = patient.discharge;
+    document.getElementById("patientWard").value = patient.ward || "";
+    $('#addPatientModal').modal('show');
+  }
+  
+  function renderPatientsList() {
+    var listContainer = document.getElementById("patientsList");
+    listContainer.innerHTML = "";
+    var searchValue = document.getElementById("patientSearch").value.toLowerCase();
+    var sortOption = document.getElementById("patientSort").value;
+    var filteredPatients = data.patients.filter(function(p) {
+      return p.name.toLowerCase().indexOf(searchValue) !== -1;
+    });
+    if(sortOption === "name"){
+      filteredPatients.sort(function(a,b){ return a.name.localeCompare(b.name); });
+    } else if(sortOption === "discharge"){
+      filteredPatients.sort(function(a,b){
+        var da = new Date(a.discharge), db = new Date(b.discharge);
+        return da - db;
+      });
+    }
+    filteredPatients.forEach(function(p) {
+      var div = document.createElement("a");
+      div.className = "list-group-item list-group-item-action";
+      div.href = "#";
+      div.textContent = p.name;
+      div.addEventListener("click", function() {
+        renderPatientDetails(p);
+      });
+      listContainer.appendChild(div);
     });
   }
   
-  filteredPatients.forEach(function(p) {
-    var div = document.createElement("div");
-    div.className = "patient-item";
-    div.style.cursor = "pointer";
-    div.textContent = p.name;
-    div.addEventListener("click", function() {
-      renderPatientDetails(p);
-    });
-    listContainer.appendChild(div);
-  });
-}
-
-// Render the right-side details panel.
-function renderPatientDetails(patient) {
-  var details = document.getElementById("patientDetails");
-  details.innerHTML = `
-    <p><strong>Имя:</strong> ${patient.name}</p>
-    <p><strong>Врач ФРМ:</strong> ${patient.doctor}</p>
-    <p><strong>Дата поступления:</strong> ${patient.admission}</p>
-    <p><strong>Дата выписки:</strong> ${patient.discharge}</p>
-    <p><strong>Отделение:</strong> ${patient.ward || ""}</p>
-    <button class="btn btn-primary" onclick="openEditPatientModal('${patient.id}')">Редактировать</button>
-    <button class="btn btn-danger" onclick="deletePatientHandler('${patient.id}')">Удалить</button>
-  `;
-}
-
-// Search and sort event listeners.
-document.getElementById("patientSearch").addEventListener("input", renderPatientsList);
-document.getElementById("patientSort").addEventListener("change", renderPatientsList);
-
-// Delete patient handler.
-function deletePatientHandler(patientId) {
-  if(confirm("Вы уверены, что хотите удалить этого пациента и все связанные приемы?")){
+  function renderPatientDetails(patient) {
+    var details = document.getElementById("patientDetails");
+    details.innerHTML = `
+      <p><strong>Имя:</strong> ${patient.name}</p>
+      <p><strong>Врач ФРМ:</strong> ${patient.doctor}</p>
+      <p><strong>Дата поступления:</strong> ${patient.admission}</p>
+      <p><strong>Дата выписки:</strong> ${patient.discharge}</p>
+      <p><strong>Отделение:</strong> ${patient.ward || ""}</p>
+      <button class="btn btn-primary" onclick="openEditPatientModal('${patient.id}')">Редактировать</button>
+      <button class="btn btn-danger" onclick="deletePatientHandler('${patient.id}')">Удалить</button>
+    `;
+  }
+  
+  document.getElementById("patientSearch").addEventListener("input", renderPatientsList);
+  document.getElementById("patientSort").addEventListener("change", renderPatientsList);
+  
+  function deletePatientHandler(patientId) {
+    if(confirm("Вы уверены, что хотите удалить этого пациента и все связанные приемы?")){
+      showLoading();
+      google.script.run.withSuccessHandler(function(response){
+        hideLoading();
+        showMessage(response);
+        google.script.run.withSuccessHandler(function(returnedData){
+          data = returnedData;
+          renderPatientsList();
+          document.getElementById("patientDetails").innerHTML = "<p>Выберите пациента из списка.</p>";
+        }).getData();
+      }).deletePatient(patientId);
+    }
+  }
+  
+  document.getElementById("addPatientForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var formData = {
+      id: document.getElementById("patientId").value,
+      name: document.getElementById("patientName").value,
+      doctor: document.getElementById("patientDoctor").value,
+      admission: document.getElementById("patientAdmission").value,
+      discharge: document.getElementById("patientDischarge").value,
+      ward: document.getElementById("patientWard").value
+    };
     showLoading();
-    google.script.run.withSuccessHandler(function(response){
+    if(formData.id){
+      google.script.run.withSuccessHandler(function(response){
+        hideLoading();
+        if(response.indexOf("Ошибка:") === 0){
+          showMessage(response);
+        } else {
+          showMessage(response);
+          google.script.run.withSuccessHandler(function(returnedData){
+            data = returnedData;
+            renderPatientsList();
+            renderPatientDetails(data.patients.find(function(p){ return p.id == formData.id; }));
+          }).getData();
+          $('#addPatientModal').modal('hide');
+        }
+      }).updatePatient(formData);
+    } else {
+      google.script.run.withSuccessHandler(function(response){
+        hideLoading();
+        if(response.indexOf("Ошибка:") === 0){
+          showMessage(response);
+        } else {
+          showMessage(response);
+          google.script.run.withSuccessHandler(function(returnedData){
+            data = returnedData;
+            renderPatientsList();
+          }).getData();
+          $('#addPatientModal').modal('hide');
+        }
+      }).addPatient(formData);
+    }
+  });
+  
+  document.addEventListener("DOMContentLoaded", function() {
+    initializeDaySelect();
+    showLoading();
+    google.script.run.withSuccessHandler(function(returnedData) {
       hideLoading();
-      showMessage(response);
-      google.script.run.withSuccessHandler(function(returnedData){
-        data = returnedData;
-        renderPatientsList();
-        document.getElementById("patientDetails").innerHTML = "<p>Выберите пациента из списка.</p>";
-      }).getData();
-    }).deletePatient(patientId);
-  }
-}
-
-// Handle add/update patient form submission.
-document.getElementById("addPatientForm").addEventListener("submit", function(e){
-  e.preventDefault();
-  var formData = {
-    id: document.getElementById("patientId").value, // if empty, then it's an add operation
-    name: document.getElementById("patientName").value,
-    doctor: document.getElementById("patientDoctor").value,
-    admission: document.getElementById("patientAdmission").value,
-    discharge: document.getElementById("patientDischarge").value,
-    ward: document.getElementById("patientWard").value
-  };
-  showLoading();
-  if(formData.id){ // update operation
-    google.script.run.withSuccessHandler(function(response){
-      hideLoading();
-      if(response.indexOf("Ошибка:") === 0){
-        showMessage(response);
-      } else {
-        showMessage(response);
-        google.script.run.withSuccessHandler(function(returnedData){
-          data = returnedData;
-          renderPatientsList();
-          renderPatientDetails(data.patients.find(function(p){ return p.id == formData.id; }));
-        }).getData();
-        $('#addPatientModal').modal('hide');
-      }
-    }).updatePatient(formData);
-  } else { // add new patient
-    google.script.run.withSuccessHandler(function(response){
-      hideLoading();
-      if(response.indexOf("Ошибка:") === 0){
-        showMessage(response);
-      } else {
-        showMessage(response);
-        google.script.run.withSuccessHandler(function(returnedData){
-          data = returnedData;
-          renderPatientsList();
-        }).getData();
-        $('#addPatientModal').modal('hide');
-      }
-    }).addPatient(formData);
-  }
-});
-
-// On page load, initialize selectors and fetch data.
-document.addEventListener("DOMContentLoaded", function() {
-  initializeDaySelect();
-  showLoading();
-  google.script.run.withSuccessHandler(function(returnedData) {
-    hideLoading();
-    data = returnedData;
-    renderSchedule(document.getElementById("daySelect").value);
-    initializeSpecialistFilter();
-    initializeDoctorFilter();
-    populateAddAppointmentForm();
-  }).getData();
-});
-
-</script>
+      data = returnedData;
+      renderSchedule(document.getElementById("daySelect").value);
+      initializeSpecialistFilter();
+      initializeDoctorFilter();
+      populateAddAppointmentForm();
+      // Explicitly refresh the patients list:
+      renderPatientsList();
+    }).getData();
+  });
+  </script>
+  

@@ -1,46 +1,45 @@
-<!-- appointmentModal.html -->
-<div class="modal fade" id="appointmentModal" tabindex="-1" role="dialog" aria-labelledby="appointmentModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 id="appointmentModalLabel" class="modal-title">Детали приема</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
-            <span aria-hidden="true">&times;</span>
-          </button>
+<!-- appointmentModal.html (Updated Stylish Version) -->
+<div class="modal fade stylish-modal" id="appointmentModal" tabindex="-1" role="dialog" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content shadow-lg">
+      <div class="modal-header bg-gradient-primary text-white">
+        <h5 id="appointmentModalLabel" class="modal-title">Детали приема</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Закрыть">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="appointmentDetailsContainer">
+          <p id="modalPatientName"></p>
+          <p id="modalAdmissionDate"></p>
+          <p id="modalDischargeDate"></p>
+          <p id="modalDoctor"></p>
+          <p id="modalNotes"></p>
         </div>
-        <div class="modal-body">
-          <div id="appointmentDetailsContainer">
-            <p id="modalPatientName"></p>
-            <p id="modalAdmissionDate"></p>
-            <p id="modalDischargeDate"></p>
-            <p id="modalDoctor"></p>
-            <p id="modalNotes"></p>
+        <div id="appointmentEditContainer" style="display:none;">
+          <div class="form-group">
+            <label for="editTimeslot" class="font-weight-bold">Временной интервал:</label>
+            <select id="editTimeslot" class="form-control"></select>
           </div>
-          <div id="appointmentEditContainer" style="display:none;">
-            <div class="form-group">
-              <label for="editTimeslot"><strong>Временной интервал:</strong></label>
-              <select id="editTimeslot" class="form-control"></select>
-            </div>
-            <div class="form-group">
-              <label for="editSpecialist"><strong>Специалист:</strong></label>
-              <select id="editSpecialist" class="form-control"></select>
-            </div>
-            <div class="form-group">
-              <label for="editNotes"><strong>Примечания:</strong></label>
-              <textarea id="editNotes" class="form-control" rows="3"></textarea>
-            </div>
+          <div class="form-group">
+            <label for="editSpecialist" class="font-weight-bold">Специалист:</label>
+            <select id="editSpecialist" class="form-control"></select>
+          </div>
+          <div class="form-group">
+            <label for="editNotes" class="font-weight-bold">Примечания:</label>
+            <textarea id="editNotes" class="form-control" rows="3"></textarea>
           </div>
         </div>
-        <div class="modal-footer" id="appointmentModalFooter">
-          <button id="editAppointmentBtn" type="button" class="btn btn-primary">Редактировать</button>
-          <button id="deleteAppointmentBtn" type="button" class="btn btn-danger">Удалить</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-        </div>
-        <div class="modal-footer" id="editFooter" style="display:none;">
-          <button id="saveEditBtn" type="button" class="btn btn-success">Сохранить</button>
-          <button id="cancelEditBtn" type="button" class="btn btn-secondary">Отмена</button>
-        </div>
+      </div>
+      <div class="modal-footer" id="appointmentModalFooter">
+        <button id="editAppointmentBtn" type="button" class="btn btn-primary">Редактировать</button>
+        <button id="deleteAppointmentBtn" type="button" class="btn btn-danger">Удалить</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+      </div>
+      <div class="modal-footer" id="editFooter" style="display:none;">
+        <button id="saveEditBtn" type="button" class="btn btn-success">Сохранить</button>
+        <button id="cancelEditBtn" type="button" class="btn btn-secondary">Отмена</button>
       </div>
     </div>
   </div>
-  
+</div>

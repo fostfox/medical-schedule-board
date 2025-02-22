@@ -1,46 +1,45 @@
-<!-- addAppointmentModal.html -->
-<div class="modal fade" id="addAppointmentModal" tabindex="-1" role="dialog" aria-labelledby="addAppointmentModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="addAppointmentForm">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addAppointmentModalLabel">Добавить прием</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
-              <span aria-hidden="true">&times;</span>
-            </button>
+<!-- addAppointmentModal.html (Updated Stylish Version) -->
+<div class="modal fade stylish-modal" id="addAppointmentModal" tabindex="-1" role="dialog" aria-labelledby="addAppointmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content shadow-lg">
+      <form id="addAppointmentForm">
+        <div class="modal-header bg-gradient-primary text-white">
+          <h5 class="modal-title" id="addAppointmentModalLabel">Добавить прием</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Закрыть">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="addPatient" class="font-weight-bold">Пациент:</label>
+            <select id="addPatient" class="form-control"></select>
           </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <label for="addPatient">Пациент:</label>
-              <select id="addPatient" class="form-control"></select>
-            </div>
-            <div class="form-group">
-              <label>Дни недели:</label>
-              <div id="addDaysContainer"></div>
-            </div>
-            <div class="form-group">
-              <label for="addTimeslot">Временной интервал:</label>
-              <select id="addTimeslot" class="form-control"></select>
-            </div>
-            <div class="form-group">
-              <label for="addSpecialist">Специалист:</label>
-              <select id="addSpecialist" class="form-control"></select>
-            </div>
-            <div class="form-group">
-              <label for="addPlace">Место:</label>
-              <input type="text" id="addPlace" class="form-control" placeholder="Введите место">
-            </div>
-            <div class="form-group">
-              <label for="addNotes">Примечания:</label>
-              <textarea id="addNotes" class="form-control" rows="3"></textarea>
-            </div>
+          <div class="form-group">
+            <label class="font-weight-bold">Дни недели:</label>
+            <div id="addDaysContainer" class="d-flex flex-wrap"></div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-            <button id="addSubmitBtn" type="submit" class="btn btn-primary">Добавить</button>
+          <div class="form-group">
+            <label for="addTimeslot" class="font-weight-bold">Временной интервал:</label>
+            <select id="addTimeslot" class="form-control"></select>
           </div>
-        </form>
-      </div>
+          <div class="form-group">
+            <label for="addSpecialist" class="font-weight-bold">Специалист:</label>
+            <select id="addSpecialist" class="form-control"></select>
+          </div>
+          <div class="form-group">
+            <label for="addPlace" class="font-weight-bold">Место:</label>
+            <input type="text" id="addPlace" class="form-control" placeholder="Введите место">
+          </div>
+          <div class="form-group">
+            <label for="addNotes" class="font-weight-bold">Примечания:</label>
+            <textarea id="addNotes" class="form-control" rows="3" placeholder="Введите примечания"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+          <button id="addSubmitBtn" type="submit" class="btn btn-success">Добавить</button>
+        </div>
+      </form>
     </div>
   </div>
-  
+</div>

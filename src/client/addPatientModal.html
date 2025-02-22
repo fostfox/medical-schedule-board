@@ -1,44 +1,43 @@
-<!-- addPatientModal.html -->
-<div class="modal fade" id="addPatientModal" tabindex="-1" role="dialog" aria-labelledby="addPatientModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="addPatientForm">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addPatientModalLabel">Пациент</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
-              <span aria-hidden="true">&times;</span>
-            </button>
+<!-- addPatientModal.html (Updated Stylish Version) -->
+<div class="modal fade stylish-modal" id="addPatientModal" tabindex="-1" role="dialog" aria-labelledby="addPatientModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content shadow-lg">
+      <form id="addPatientForm" class="stylish-form">
+        <div class="modal-header bg-gradient-primary text-white">
+          <h5 class="modal-title" id="addPatientModalLabel">Добавить пациента</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Закрыть">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Hidden field to store patient ID for edits -->
+          <input type="hidden" id="patientId">
+          <div class="form-group">
+            <label for="patientName" class="font-weight-bold">Имя:</label>
+            <input type="text" id="patientName" class="form-control" placeholder="Введите имя пациента" required>
           </div>
-          <div class="modal-body">
-            <!-- Hidden field to store patient ID for edits -->
-            <input type="hidden" id="patientId">
-            <div class="form-group">
-              <label for="patientName">Имя:</label>
-              <input type="text" id="patientName" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="patientDoctor">Врач ФРМ:</label>
-              <input type="text" id="patientDoctor" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="patientAdmission">Дата поступления:</label>
-              <input type="date" id="patientAdmission" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="patientDischarge">Дата выписки:</label>
-              <input type="date" id="patientDischarge" class="form-control">
-            </div>
-            <div class="form-group">
-              <label for="patientWard">Отделение:</label>
-              <input type="text" id="patientWard" class="form-control">
-            </div>
+          <div class="form-group">
+            <label for="patientDoctor" class="font-weight-bold">Врач ФРМ:</label>
+            <input type="text" id="patientDoctor" class="form-control" placeholder="Введите имя врача" required>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-            <button type="submit" class="btn btn-primary">Сохранить</button>
+          <div class="form-group">
+            <label for="patientAdmission" class="font-weight-bold">Дата поступления:</label>
+            <input type="date" id="patientAdmission" class="form-control" required>
           </div>
-        </form>
-      </div>
+          <div class="form-group">
+            <label for="patientDischarge" class="font-weight-bold">Дата выписки:</label>
+            <input type="date" id="patientDischarge" class="form-control" placeholder="Если не заполнено, значит не выписан">
+          </div>
+          <div class="form-group">
+            <label for="patientWard" class="font-weight-bold">Отделение:</label>
+            <input type="text" id="patientWard" class="form-control" placeholder="Введите отделение">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+          <button type="submit" class="btn btn-success">Сохранить</button>
+        </div>
+      </form>
     </div>
   </div>
-  
+</div>

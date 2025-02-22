@@ -1,39 +1,54 @@
 <style>
+  /* Import a modern font from Google Fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+  
+  /* Global Styles */
   body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
+    background: #f4f7f9;
+    margin: 0;
+    padding: 0;
   }
-  .container {
-    margin: 0 auto;
+  
+  .container,
+  .container-fluid {
+    padding: 20px;
   }
-
-  /* Compact, printable table with zebra striping */
+  
+  /* Navbar Gradient */
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  }
+  
+  /* Schedule Table Styling */
   .schedule-table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
-    font-size: 12px;
+    font-size: 14px;
   }
+  
   .schedule-table th,
   .schedule-table td {
     border: 1px solid #dee2e6;
-    padding: 5px;
+    padding: 8px;
     text-align: center;
     vertical-align: middle;
   }
+  
   .schedule-table th {
     background-color: #f8f9fa;
   }
+  
   .schedule-table tbody tr:nth-child(odd) {
     background-color: #f9f9f9;
   }
+  
   .schedule-table tbody tr:nth-child(even) {
     background-color: #ffffff;
   }
-  .modal-content {
-    font-size: 14px;
-  }
-
-  /* Loading overlay */
+  
+  /* Loading Overlay */
   #loadingOverlay {
     display: none;
     position: fixed;
@@ -48,4 +63,60 @@
     font-size: 24px;
     padding-top: 20%;
   }
-</style>
+  
+  /* Modal Content Styling */
+  .modal-content {
+    border-radius: 10px;
+    border: none;
+    background: #ffffff;
+    font-size: 14px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  /* Stylish Modal Customizations */
+  .stylish-modal .modal-content {
+    border-radius: 10px;
+    border: none;
+    background: #f9f9f9;
+  }
+  
+  /* Form Styling */
+  .stylish-form label {
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  
+  .stylish-form .form-control {
+    border-radius: 5px;
+    box-shadow: none;
+    border: 1px solid #ced4da;
+    font-size: 14px;
+  }
+  
+  /* Button Customizations */
+  .btn-success {
+    background-color: #28a745;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-success:hover {
+    background-color: #218838;
+  }
+  
+  .btn-secondary {
+    background-color: #6c757d;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+  
+  /* Close Button Styling */
+  .modal-header .close {
+    outline: none;
+  }
+  </style>
+  
