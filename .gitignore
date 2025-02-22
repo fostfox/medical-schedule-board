@@ -1,0 +1,7 @@
+# Node. Dependency directories
+node_modules/
+jspm_packages/
+
+## Generated files and folders for Google Apps Script
+.clasp.json
+.compiled/

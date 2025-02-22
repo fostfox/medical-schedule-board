@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Расписание</title>
+    <!-- Include Bootstrap CSS from CDN -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <?!= include('client/style.html') ?>
+  </head>
+  <body>
+    <div id="loadingOverlay">Загрузка...</div>
+    <div class="container mt-4">
+      <div class="row">
+        <div class="col">
+          <h2>Расписание</h2>
+        </div>
+        <div class="col text-right">
+          <button class="btn btn-success" data-toggle="modal" data-target="#addAppointmentModal">Добавить</button>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-3">
+          <label for="daySelect">Выберите день недели:</label>
+          <select id="daySelect" class="form-control"></select>
+        </div>
+        <div class="col-md-3">
+          <label for="specialistFilter">Фильтр по специалисту:</label>
+          <select id="specialistFilter" class="form-control">
+            <option value="">Все специалисты</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="doctorFilter">Фильтр по врачу:</label>
+          <select id="doctorFilter" class="form-control">
+            <option value="">Все врачи</option>
+          </select>
+        </div>
+      </div>
+      <div id="scheduleContainer"></div>
+    </div>
+    
+    <!-- Include modals via Apps Script include -->
+    <?!= include('client/addAppointmentModal') ?>
+    <?!= include('client/appointmentModal') ?>
+    <?!= include('client/messageModal') ?>
+    
+    <!-- Include jQuery and Bootstrap JS from CDN -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    
+    <?!= include('client/script.html') ?>
+  </body>
+</html>

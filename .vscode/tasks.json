@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "npm - install",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "install"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "clasp - login",
+            "type": "shell",
+            "command": "clasp",
+            "args": [
+                "login"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "clasp - push",
+            "type": "shell",
+            "command": "node",
+            "args": [
+                "scripts/generateAndPush.js"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always"
+            }
+        }
+    ]
+}
