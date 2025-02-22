@@ -1,0 +1,44 @@
+<!-- addPatientModal.html -->
+<div class="modal fade" id="addPatientModal" tabindex="-1" role="dialog" aria-labelledby="addPatientModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form id="addPatientForm">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addPatientModalLabel">Пациент</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Hidden field to store patient ID for edits -->
+            <input type="hidden" id="patientId">
+            <div class="form-group">
+              <label for="patientName">Имя:</label>
+              <input type="text" id="patientName" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="patientDoctor">Врач ФРМ:</label>
+              <input type="text" id="patientDoctor" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="patientAdmission">Дата поступления:</label>
+              <input type="date" id="patientAdmission" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="patientDischarge">Дата выписки:</label>
+              <input type="date" id="patientDischarge" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="patientWard">Отделение:</label>
+              <input type="text" id="patientWard" class="form-control">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  

@@ -75,7 +75,7 @@ fs.writeFile('.clasp.json', JSON.stringify(claspConfig, null, 2), (err) => {
       console.log("Config.gs has been updated successfully.");
 
       // Run clasp push
-      exec('clasp push', (err, stdout, stderr) => {
+      exec('clasp push --force', (err, stdout, stderr) => {
         if (err) {
           console.error('Error running clasp push:', err);
           return;

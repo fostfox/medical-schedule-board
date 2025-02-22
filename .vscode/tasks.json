@@ -36,6 +36,18 @@
             "presentation": {
                 "reveal": "always"
             }
+        },
+        { 
+            "label": "combine files",
+            "type": "shell",
+            "command": "node",
+            "args": [
+                "scripts/combineFiles.js"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always"
+            }
         }
     ]
 }

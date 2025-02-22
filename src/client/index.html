@@ -3,21 +3,28 @@
   <head>
     <meta charset="UTF-8">
     <title>Расписание</title>
-    <!-- Include Bootstrap CSS from CDN -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <?!= include('client/style.html') ?>
   </head>
   <body>
+    <!-- Loading Overlay -->
     <div id="loadingOverlay">Загрузка...</div>
+    
+    <!-- Navigation Bar -->
     <div class="container mt-4">
-      <div class="row">
+      <div class="row mb-3">
         <div class="col">
-          <h2>Расписание</h2>
+          <button id="navSchedule" class="btn btn-primary">Расписание</button>
         </div>
         <div class="col text-right">
-          <button class="btn btn-success" data-toggle="modal" data-target="#addAppointmentModal">Добавить</button>
+          <button id="navPatients" class="btn btn-primary">Пациенты</button>
         </div>
       </div>
+    </div>
+    
+    <!-- Schedule Page -->
+    <div id="schedulePage" class="container">
+      <!-- Filters and Add Appointment Button -->
       <div class="row mb-3">
         <div class="col-md-3">
           <label for="daySelect">Выберите день недели:</label>
@@ -35,20 +42,54 @@
             <option value="">Все врачи</option>
           </select>
         </div>
+        <!-- Add Appointment Button placed at the top-right corner -->
+        <div class="col-md-3 text-right">
+          <label style="visibility:hidden;">Добавить</label>
+          <button class="btn btn-success" data-toggle="modal" data-target="#addAppointmentModal">Добавить</button>
+        </div>
       </div>
       <div id="scheduleContainer"></div>
     </div>
     
-    <!-- Include modals via Apps Script include -->
-    <?!= include('client/addAppointmentModal') ?>
-    <?!= include('client/appointmentModal') ?>
-    <?!= include('client/messageModal') ?>
+    <!-- Patients Page -->
+    <div id="patientsPage" class="container" style="display:none;">
+      <div class="row">
+        <!-- Left Side: Patient List with search and sort -->
+        <div class="col-md-4">
+          <h4>Список пациентов</h4>
+          <div class="mb-2">
+            <input id="patientSearch" type="text" class="form-control" placeholder="Поиск по имени">
+          </div>
+          <div class="mb-2">
+            <select id="patientSort" class="form-control">
+              <option value="name">По имени</option>
+              <option value="discharge">По дате выписки</option>
+            </select>
+          </div>
+          <div id="patientsList" style="max-height:400px; overflow-y:auto;"></div>
+          <button id="addPatientBtn" class="btn btn-success btn-block mt-2">Добавить пациента</button>
+        </div>
+        <!-- Right Side: Patient Details -->
+        <div class="col-md-8">
+          <h4>Детали пациента</h4>
+          <div id="patientDetails">
+            <p>Выберите пациента из списка.</p>
+          </div>
+        </div>
+      </div>
+      <button id="backToScheduleBtn" class="btn btn-secondary mt-3">Вернуться к расписанию</button>
+    </div>
     
-    <!-- Include jQuery and Bootstrap JS from CDN -->
+    <!-- Include Modals -->
+    <?!= include('client/addAppointmentModal.html') ?>
+    <?!= include('client/appointmentModal.html') ?>
+    <?!= include('client/messageModal.html') ?>
+    <?!= include('client/addPatientModal.html') ?>
+    
+    <!-- External Libraries -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    
     <?!= include('client/script.html') ?>
   </body>
 </html>
