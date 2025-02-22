@@ -5,23 +5,27 @@ This repository contains the source code for the "Расписание" web appl
 ## Repository Structure
 
 ```
-/Расписание
-├── src
-│   ├── client
-│   │   ├── index.html              // Main HTML page (includes partials)
-│   │   ├── style.css               // Client-side CSS
-│   │   ├── script.js               // Client-side JavaScript
-│   │   ├── addAppointmentModal.html// Partial for the "Добавить прием" modal
-│   │   ├── appointmentModal.html   // Partial for the details/edit modal
-│   │   └── messageModal.html       // Partial for custom message popup
-│   └── server
-│       ├── Appointments.gs         // Functions for appointments (getData, add, update, delete)
-│       ├── Patients.gs             // Functions for reading patients data
-│       ├── Specialists.gs          // Functions for reading specialists data (and mapping)
-│       └── Common.gs               // Common functions (e.g. lock handling)
-├── TABLES.md                       // Table description with sample data
-├── README.md                       // Project description, structure, and deployment instructions
-└── appsscript.json                 // Apps Script manifest file
+/Расписание 
+├── src 
+│   ├── client 
+│   │   ├── index.html               // Main HTML template (includes partials, CSS, and JS) 
+│   │   ├── style.html               // Client-side CSS file (wrapped in <style> tags) 
+│   │   ├── script.html              // Client-side JavaScript file (wrapped in <script> tags) 
+│   │   ├── addAppointmentModal.html // Partial for the "Добавить прием" modal 
+│   │   ├── appointmentModal.html    // Partial for the details/edit modal 
+│   │   └── messageModal.html        // Partial for the custom message popup 
+│   └── server 
+│       ├── Main.gs                  // Contains doGet() and include() functions (entry point) 
+│       ├── Appointments.gs          // Server-side functions for appointments (getData, add, update, delete) 
+│       ├── Patients.gs              // Functions for reading patients data 
+│       ├── Specialists.gs           // Functions for reading specialists data and mapping 
+│       ├── Common.gs                // Common functions (e.g., lock handling) 
+│       └── Config.gs                // Global configuration (e.g., Spreadsheet ID) 
+├── scripts 
+│   └── generateAndPush.js // Script to update Config.gs using environment variables and push the project via clasp. 
+├── TABLES.md              // Description of Google Sheets tables with examples 
+├── README.md              // This file 
+└── appsscript.json        // Apps Script project manifest
 ```
 
 ## How CSS and JavaScript are Served
