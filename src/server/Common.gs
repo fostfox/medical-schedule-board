@@ -12,3 +12,11 @@ function acquireLock() {
   }
   return lock;
 }
+
+function checkPermissions() {
+  var user = Session.getActiveUser();
+  if (!user || !user.getEmail()) {
+    return "Ошибка: Модификация данных не разрешена.";
+  }
+  return null;
+}

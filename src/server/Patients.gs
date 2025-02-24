@@ -23,12 +23,9 @@ function getPatientsData() {
 }
 
 function addPatient(formData) {
-  var lock = LockService.getScriptLock();
-  try {
-    lock.waitLock(30000);
-  } catch(e) {
-    return "Ошибка: не удалось получить блокировку, попробуйте позже.";
-  }
+  var check = checkPermissions();
+  if (check) return check;
+  var lock = acquireLock();
   try {
     var ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
     var sheet = ss.getSheetByName("Patients");
@@ -65,12 +62,9 @@ function addPatient(formData) {
 }
 
 function updatePatient(formData) {
-  var lock = LockService.getScriptLock();
-  try {
-    lock.waitLock(30000);
-  } catch(e) {
-    return "Ошибка: не удалось получить блокировку, попробуйте позже.";
-  }
+  var check = checkPermissions();
+  if (check) return check;
+  var lock = acquireLock();
   try {
     var ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
     var sheet = ss.getSheetByName("Patients");
@@ -91,19 +85,16 @@ function updatePatient(formData) {
         return "Пациент успешно обновлен";
       }
     }
-    return "Пациент не найден";
+    return "Ошибка: Пациент не найден";
   } finally {
     lock.releaseLock();
   }
 }
 
 function deletePatient(patientId) {
-  var lock = LockService.getScriptLock();
-  try {
-    lock.waitLock(30000);
-  } catch(e) {
-    return "Ошибка: не удалось получить блокировку, попробуйте позже.";
-  }
+  var check = checkPermissions();
+  if (check) return check;
+  var lock = acquireLock();
   try {
     var ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
     // Delete patient row.
@@ -122,7 +113,7 @@ function deletePatient(patientId) {
         break;
       }
     }
-    if(!found) return "Пациент не найден";
+    if(!found) return "Ошибка: Пациент не найден";
     
     // Delete associated appointments.
     var appSheet = ss.getSheetByName("Appointments");

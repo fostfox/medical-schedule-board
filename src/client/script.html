@@ -94,9 +94,9 @@
     });
   }
   
-  // Render schedule table.
-  function renderSchedule(selectedDay) {
+  function getFilteredAppointments() {
     if (!data) return;
+    var selectedDay = document.getElementById("daySelect").value
     var filteredAppointments = data.appointments.filter(function(app) {
       return app.day === selectedDay;
     });
@@ -113,6 +113,27 @@
         return patient && patient.doctor === selectedDoctor;
       });
     }
+    return filteredAppointments;
+  }
+
+  function shortenName(fullName) {
+    var parts = fullName.trim().split(" ");
+    if (!parts.length) return fullName;
+    var surname = parts[0];
+    var initials = "";
+    for (var i = 1; i < parts.length; i++) {
+      if (parts[i].length > 0) {
+        initials += " " + parts[i].charAt(0).toUpperCase() + ".";
+      }
+    }
+    return surname + initials;
+  }
+
+  // Render schedule table.
+  function renderSchedule() {
+    if (!data) return;
+
+    var filteredAppointments = getFilteredAppointments();
     
     // Build table.
     var table = document.createElement("table");
@@ -142,7 +163,7 @@
     patientsWithAppointment.forEach(function(patient) {
       var row = document.createElement("tr");
       var tdName = document.createElement("td");
-      tdName.textContent = patient.name;
+      tdName.textContent = shortenName(patient.name);
       row.appendChild(tdName);
       data.timeslots.forEach(function(slot) {
         var td = document.createElement("td");
@@ -510,14 +531,19 @@ function showPatientsPage() {
       header[0].push(slot.slot);
     });
     
-    // --- Use only the records visible on the page ---
-    // Assumes that window.visiblePatients holds the filtered/visible patient array.
-    // Otherwise, fallback to all patients.
-    const visiblePatients = window.visiblePatients || data.patients;
-    
     // --- Build table body from visible patients ---
+    var filteredAppointments = getFilteredAppointments();
+
+    var patientsWithAppointment = [];
+    filteredAppointments.forEach(function(app) {
+      var patient = data.patients.find(function(p) { return p.id === app.patientId; });
+      if (patient && !patientsWithAppointment.some(function(p) { return p.id === patient.id; })) {
+        patientsWithAppointment.push(patient);
+      }
+    });
+
     const body = [];
-    visiblePatients.forEach(patient => {
+    patientsWithAppointment.forEach(patient => {
       let row = [];
       row.push(patient.name);
       row.push(patient.doctor);
@@ -525,7 +551,7 @@ function showPatientsPage() {
       row.push(patient.ward);
     
       data.timeslots.forEach(slot => {
-        const appointment = data.appointments.find(app => {
+        const appointment = filteredAppointments.find(app => {
           return app.patientId === patient.id && app.timeslotId === slot.id;
         });
         if (appointment) {

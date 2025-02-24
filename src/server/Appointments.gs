@@ -31,6 +31,8 @@ function getAppointmentsData() {
   }
   
   function addAppointment(formData) {
+    var check = checkPermissions();
+    if (check) return check;
     var lock = acquireLock();
     try {
       var ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
@@ -73,7 +75,7 @@ function getAppointmentsData() {
       var responses = [];
       formData.days.forEach(function(day) {
         maxId++;
-        var newRecordId = "R" + ("000" + maxId).slice(-3);
+        var newRecordId = "R" + ("00000" + maxId).slice(-5);
         var newRow = new Array(headerRow.length).fill("");
         newRow[indices["Record ID"]] = newRecordId;
         newRow[indices["Patient ID"]] = formData.patientId;
@@ -92,6 +94,8 @@ function getAppointmentsData() {
   }
   
   function deleteAppointment(recordId) {
+    var check = checkPermissions();
+    if (check) return check;
     var lock = acquireLock();
     try {
       var ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
@@ -109,13 +113,15 @@ function getAppointmentsData() {
           return "Прием " + recordId + " успешно удален";
         }
       }
-      return "Прием не найден";
+      return "Ошибка: Прием не найден";
     } finally {
       lock.releaseLock();
     }
   }
   
   function updateAppointment(formData) {
+    var check = checkPermissions();
+    if (check) return check;
     var lock = acquireLock();
     try {
       var ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
@@ -137,7 +143,7 @@ function getAppointmentsData() {
           return "Прием " + formData.record + " успешно обновлен";
         }
       }
-      return "Прием не найден";
+      return "Ошибка: Прием не найден";
     } finally {
       lock.releaseLock();
     }

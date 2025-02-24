@@ -20,10 +20,11 @@ const srcDir = path.resolve(__dirname, '../src');
 const compiledDir = path.resolve(__dirname, '../.compiled');
 const configFilePath = path.join(compiledDir, 'server', 'Config.gs');
 
-// Ensure the .compiled directory exists
-if (!fs.existsSync(compiledDir)) {
-  fs.mkdirSync(compiledDir, { recursive: true });
+// Remove the .compiled directory if it exists
+if (fs.existsSync(compiledDir)) {
+  fs.rmdirSync(compiledDir, { recursive: true });
 }
+fs.mkdirSync(compiledDir, { recursive: true });
 
 // Copy all files from src to .compiled
 function copyFiles(src, dest) {

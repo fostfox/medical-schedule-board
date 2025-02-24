@@ -8,7 +8,9 @@ const excludeFilesAndDirs = [
   '.compiled', 
   'node_modules', 
   '.git',
-  '.clasp.json'
+  '.clasp.json',
+  'fonts',
+  '.vscode',
 ];
 
 const dir = path.join(__dirname, '..');
