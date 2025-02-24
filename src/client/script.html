@@ -122,9 +122,6 @@
     var thPatient = document.createElement("th");
     thPatient.textContent = "Пациент";
     headerRow.appendChild(thPatient);
-    var thWard = document.createElement("th");
-    thWard.textContent = "Палата";
-    headerRow.appendChild(thWard);
     data.timeslots.forEach(function(slot) {
       var th = document.createElement("th");
       th.textContent = slot.slot;
@@ -147,9 +144,6 @@
       var tdName = document.createElement("td");
       tdName.textContent = patient.name;
       row.appendChild(tdName);
-      var tdWard = document.createElement("td");
-      tdWard.textContent = patient.ward || "";
-      row.appendChild(tdWard);
       data.timeslots.forEach(function(slot) {
         var td = document.createElement("td");
         var appointmentEntry = filteredAppointments.find(function(app) {
