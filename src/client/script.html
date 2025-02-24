@@ -494,5 +494,85 @@ function showPatientsPage() {
       renderPatientsList();
     }).getData();
   });
+
+  async function generatePDFTable() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({
+      orientation: "landscape",
+      unit: "pt",
+      format: "a4"
+    });
+    
+    // --- Add title and print date ---
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const title = "РАСПИСАНИЕ - " + new Date().toLocaleString();
+    doc.setFont("Roboto-Regular", "normal");
+    doc.setFontSize(12);
+    doc.text(title, pageWidth / 2, 40, { align: "center" });
+    
+    // --- Build table header ---
+    const header = [["Пациент", "Врач ФРМ", "Дата выписки", "Палата"]];
+    data.timeslots.forEach(slot => {
+      header[0].push(slot.slot);
+    });
+    
+    // --- Use only the records visible on the page ---
+    // Assumes that window.visiblePatients holds the filtered/visible patient array.
+    // Otherwise, fallback to all patients.
+    const visiblePatients = window.visiblePatients || data.patients;
+    
+    // --- Build table body from visible patients ---
+    const body = [];
+    visiblePatients.forEach(patient => {
+      let row = [];
+      row.push(patient.name);
+      row.push(patient.doctor);
+      row.push(patient.discharge);
+      row.push(patient.ward);
+    
+      data.timeslots.forEach(slot => {
+        const appointment = data.appointments.find(app => {
+          return app.patientId === patient.id && app.timeslotId === slot.id;
+        });
+        if (appointment) {
+          let cellContent = appointment.place + "\n" + appointment.specialist;
+          if (appointment.notes && appointment.notes.trim() !== "") {
+            cellContent += " *";
+          }
+          row.push(cellContent);
+        } else {
+          row.push("");
+        }
+      });
+      body.push(row);
+    });
+    
+    // --- Generate the table using AutoTable ---
+    doc.autoTable({
+      head: header,
+      body: body,
+      startY: 50,
+      margin: { left: 10, right: 10, top: 20, bottom: 10 },
+      styles: { 
+        font: "Roboto-Regular",
+        fontStyle: "normal",
+        fontSize: 7,
+        cellPadding: 2,
+        lineWidth: 0.1,
+        lineColor: [0, 0, 0]
+      },
+      headStyles: { fillColor: [0, 51, 25], lineWidth: 0.1, lineColor: [0, 0, 0], fontSize: 5 },
+      // Ensure that the first column (patient name) is auto-sized and does not wrap
+      columnStyles: {
+        0: { cellWidth: 'auto', overflow: 'visible', halign: 'left' }
+      }
+    });
+    
+    // --- Save the generated PDF ---
+    doc.save("Расписание.pdf");
+  }
+
+
+
   </script>
   
