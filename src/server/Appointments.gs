@@ -131,6 +131,7 @@ function getAppointmentsData() {
         if (data[i][recordCol] === formData.record) {
           data[i][indices["TimeSlot ID"]] = formData.timeslotId;
           data[i][indices["Specialist"]] = formData.specialist;
+          data[i][indices["Place"]] = formData.place;
           data[i][indices["Notes"]] = formData.notes;
           sheet.getRange(i + 2, 1, 1, sheet.getLastColumn()).setValues([data[i]]);
           return "Прием " + formData.record + " успешно обновлен";
@@ -141,4 +142,3 @@ function getAppointmentsData() {
       lock.releaseLock();
     }
   }
-  

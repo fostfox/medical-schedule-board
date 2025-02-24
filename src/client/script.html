@@ -123,7 +123,7 @@
     thPatient.textContent = "Пациент";
     headerRow.appendChild(thPatient);
     var thWard = document.createElement("th");
-    thWard.textContent = "Отделение";
+    thWard.textContent = "Палата";
     headerRow.appendChild(thWard);
     data.timeslots.forEach(function(slot) {
       var th = document.createElement("th");
@@ -184,7 +184,17 @@
     document.getElementById("modalAdmissionDate").innerHTML = "<strong>Дата поступления:</strong> " + patient.admission;
     document.getElementById("modalDischargeDate").innerHTML = "<strong>Дата выписки:</strong> " + patient.discharge;
     document.getElementById("modalDoctor").innerHTML = "<strong>Врач ФРМ:</strong> " + patient.doctor;
+    document.getElementById("modalWard").innerHTML = "<strong>Палата:</strong> " + (patient.ward || "");
+    
+    // Lookup the timeslot text from the global data.timeslots array
+    var timeslotObj = data.timeslots.find(function(ts){ return ts.id == appointment.timeslotId; });
+    var timeslotText = timeslotObj ? timeslotObj.slot : appointment.timeslotId;
+    document.getElementById("modalTimeslot").innerHTML = "<strong>Временной интервал:</strong> " + timeslotText;
+    
+    document.getElementById("modalSpecialist").innerHTML = "<strong>Специалист:</strong> " + appointment.specialist;
+    document.getElementById("modalPlace").innerHTML = "<strong>Кабинет:</strong> " + appointment.place;
     document.getElementById("modalNotes").innerHTML = "<strong>Примечания:</strong> " + appointment.notes;
+    
     document.getElementById("appointmentDetailsContainer").style.display = "block";
     document.getElementById("appointmentEditContainer").style.display = "none";
     document.getElementById("appointmentModalFooter").style.display = "block";
@@ -213,6 +223,7 @@
       if (spec.id == currentAppointment.specialistId) option.selected = true;
       editSpecialist.appendChild(option);
     });
+    document.getElementById("editPlace").value = currentAppointment.place;
     document.getElementById("editNotes").value = currentAppointment.notes;
     document.getElementById("appointmentDetailsContainer").style.display = "none";
     document.getElementById("appointmentEditContainer").style.display = "block";
@@ -232,6 +243,7 @@
       record: currentAppointmentRecordId,
       timeslotId: document.getElementById("editTimeslot").value,
       specialist: document.getElementById("editSpecialist").value,
+      place: document.getElementById("editPlace").value,
       notes: document.getElementById("editNotes").value
     };
     showLoading();
@@ -250,6 +262,43 @@
         }).getData();
       }
     }).updateAppointment(formData);
+  });
+
+  document.getElementById("addAppointmentForm").addEventListener("submit", function(e) {
+    e.preventDefault(); // Prevent default form submission (avoiding the white page)
+    var formData = {
+      patientId: document.getElementById("addPatient").value,
+      timeslotId: document.getElementById("addTimeslot").value,
+      specialist: document.getElementById("addSpecialist").value,
+      place: document.getElementById("addPlace").value,
+      notes: document.getElementById("addNotes").value,
+      days: []
+    };
+    // Collect selected days checkboxes
+    var checkboxes = document.querySelectorAll('#addDaysContainer input[type="checkbox"]');
+    checkboxes.forEach(function(checkbox) {
+      if (checkbox.checked) {
+        formData.days.push(checkbox.value);
+      }
+    });
+    if(formData.days.length === 0) {
+      showMessage("Ошибка: выберите хотя бы один день для приема.");
+      return;
+    }
+    showLoading();
+    google.script.run.withSuccessHandler(function(response) {
+      hideLoading();
+      if(response.indexOf("Ошибка:") === 0) {
+        showMessage(response);
+      } else {
+        showMessage(response);
+        google.script.run.withSuccessHandler(function(returnedData) {
+          data = returnedData;
+          renderSchedule(document.getElementById("daySelect").value);
+        }).getData();
+        $('#addAppointmentModal').modal('hide');
+      }
+    }).addAppointment(formData);
   });
   
   document.getElementById("deleteAppointmentBtn").addEventListener("click", function() {
@@ -364,7 +413,7 @@ function showPatientsPage() {
       <p><strong>Врач ФРМ:</strong> ${patient.doctor}</p>
       <p><strong>Дата поступления:</strong> ${patient.admission}</p>
       <p><strong>Дата выписки:</strong> ${patient.discharge}</p>
-      <p><strong>Отделение:</strong> ${patient.ward || ""}</p>
+      <p><strong>Палата:</strong> ${patient.ward || ""}</p>
       <button class="btn btn-primary" onclick="openEditPatientModal('${patient.id}')">Редактировать</button>
       <button class="btn btn-danger" onclick="deletePatientHandler('${patient.id}')">Удалить</button>
     `;
