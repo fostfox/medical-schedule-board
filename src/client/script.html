@@ -129,6 +129,32 @@
     return surname + initials;
   }
 
+  // New functions to highlight the entire row and column on hover
+  function highlightRowAndColumn(cell) {
+    var cellIndex = cell.cellIndex;
+    var tr = cell.parentElement;
+    tr.classList.add("hover-row");
+    var table = tr.parentElement.parentElement;
+    for (var i = 0; i < table.rows.length; i++) {
+      var row = table.rows[i];
+      if (row.cells[cellIndex]) {
+        row.cells[cellIndex].classList.add("hover-col");
+      }
+    }
+  }
+
+  function clearHighlights() {
+    var table = document.querySelector(".schedule-table");
+    if (!table) return;
+    for (var i = 0; i < table.rows.length; i++) {
+      var row = table.rows[i];
+      row.classList.remove("hover-row");
+      for (var j = 0; j < row.cells.length; j++) {
+        row.cells[j].classList.remove("hover-col");
+      }
+    }
+  }
+
   // Render schedule table.
   function renderSchedule() {
     if (!data) return;
@@ -164,6 +190,10 @@
       var row = document.createElement("tr");
       var tdName = document.createElement("td");
       tdName.textContent = shortenName(patient.name);
+      tdName.addEventListener("mouseenter", function() {
+          highlightRowAndColumn(this);
+      });
+      tdName.addEventListener("mouseleave", clearHighlights);
       row.appendChild(tdName);
       data.timeslots.forEach(function(slot) {
         var td = document.createElement("td");
@@ -181,6 +211,10 @@
             showAppointmentModal(patient, appointmentEntry);
           });
         }
+        td.addEventListener("mouseenter", function() {
+            highlightRowAndColumn(this);
+        });
+        td.addEventListener("mouseleave", clearHighlights);
         row.appendChild(td);
       });
       tbody.appendChild(row);

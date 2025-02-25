@@ -22,7 +22,7 @@ const configFilePath = path.join(compiledDir, 'server', 'Config.gs');
 
 // Remove the .compiled directory if it exists
 if (fs.existsSync(compiledDir)) {
-  fs.rmdirSync(compiledDir, { recursive: true });
+  fs.rmSync(compiledDir, { recursive: true });
 }
 fs.mkdirSync(compiledDir, { recursive: true });
 

@@ -20,26 +20,68 @@
     background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
   }
   
+  /* Appointment Table Container */
+  #scheduleContainer {
+    overflow-x: auto;
+    overflow-y: auto;
+    position: relative;
+    max-height: calc(100vh - 280px);
+  }
+  
   /* Schedule Table Styling */
   .schedule-table {
+    min-width: 1200px;
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed;
+    table-layout: auto;
     font-size: 14px;
   }
   
   .schedule-table th,
   .schedule-table td {
+    white-space: nowrap;
+    width: auto;
+    padding: 4px;
     border: 1px solid #dee2e6;
-    padding: 8px;
     text-align: center;
     vertical-align: middle;
   }
   
-  .schedule-table th {
-    background-color: #f8f9fa;
+  /* Sticky Header */
+  .schedule-table thead th {
+    position: sticky !important;
+    top: 0;
+    background: #f8f9fa;
+    z-index: 2;
   }
   
+  /* Ensure the top-left header cell (Пациенты) is above all sticky elements */
+  .schedule-table thead th:first-child {
+    z-index: 10;
+  }
+  
+  /* Sticky First Column (Patient Names) */
+  .schedule-table th:first-child,
+  .schedule-table td:first-child {
+    position: sticky;
+    left: 0;
+    padding-left: 6px;
+    background: #fff;
+    z-index: 5;
+    border-right: 2px solid #dee2e6;
+    text-align: left;
+  }
+  
+  /* Hover effects for row and column highlighting */
+  .hover-row {
+    background-color: rgb(242, 248, 254) !important;
+  }
+  
+  .hover-col {
+    background-color: rgb(242, 248, 254) !important;
+  }
+  
+  /* Row Striping */
   .schedule-table tbody tr:nth-child(odd) {
     background-color: #f9f9f9;
   }
@@ -118,5 +160,4 @@
   .modal-header .close {
     outline: none;
   }
-  </style>
-  
+</style>
