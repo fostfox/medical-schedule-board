@@ -56,4 +56,10 @@ This project includes a Node.js script to automate configuration updates and dep
   - **Specialists**: Columns include Specialist ID, Specialist Name.
   - **Appointments**: Columns include Record ID, Patient ID, TimeSlot ID, Day of Week, Place, Notes, Specialist.
 
-For further details, please see the [TABLES.md](TABLES.md) file.
+For further details, please see the [TABLES.md](docs/TABLES.md) file.
+
+## Custom Fonts
+
+This project requires custom fonts to properly render Cyrillic text (for example, in generated PDFs). The default fonts in jsPDF do not support Russian characters, so we use a custom font (Roboto-Regular) that has been converted into a base64 string and embedded into jsPDF.
+
+For detailed instructions on how to generate and integrate these custom fonts, please see the [FONTS.md](docs/FONTS.md) file.

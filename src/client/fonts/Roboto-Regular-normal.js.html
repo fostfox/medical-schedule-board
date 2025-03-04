@@ -6,7 +6,7 @@ const { jsPDF } = window.jspdf;
 var callAddFont = function () {
     this.addFileToVFS('Roboto-Regular-normal.ttf', font);
     this.addFont('Roboto-Regular-normal.ttf', 'Roboto-Regular', 'normal');
-    console.log('Font added');
+    console.log('Font Roboto-Regular-normal.ttf added');
 };
 jsPDF.API.events.push(['addFonts', callAddFont])
 
